@@ -5,9 +5,17 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000; // Use dynamic port for deployment
 
-app.use(cors());
+// Configure CORS
+app.use(
+    cors({
+        origin: ["http://localhost:5173", "https://globaleducationadviser.netlify.app"], // Allow local and deployed frontend URLs
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+    })
+);
+
 app.use(bodyParser.json());
 
 // OAuth2 Client Setup
@@ -23,20 +31,23 @@ oauth2Client.setCredentials({
 
 const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
+// POST endpoint to save data to Google Sheets
 app.post("/save-to-sheets", async (req, res) => {
     const { name, email, phone, queries } = req.body;
 
     try {
+        // Validate required fields
         if (!name || !email) {
             throw new Error("Name and Email are required fields.");
         }
 
+        // Append data to Google Sheets
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: process.env.SPREADSHEET_ID,
             range: "Sheet1!A1:D1",
             valueInputOption: "USER_ENTERED",
             requestBody: {
-                values: [[name, email, phone, queries]],
+                values: [[name, email, phone || "N/A", queries || "N/A"]],
             },
         });
 
@@ -44,12 +55,13 @@ app.post("/save-to-sheets", async (req, res) => {
         res.status(200).send({ message: "Data saved successfully!" });
     } catch (error) {
         console.error("Error saving to Google Sheets:", error.message);
-        res
-            .status(500)
-            .send({ error: error.message || "Failed to save data to Google Sheets." });
+        res.status(500).send({
+            error: error.message || "Failed to save data to Google Sheets.",
+        });
     }
 });
 
+// Start server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
