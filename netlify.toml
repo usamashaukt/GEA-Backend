@@ -1,0 +1,7 @@
+[build]
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/save-to-sheets"
+  to = "/.netlify/functions/save-to-sheets"
+  status = 200

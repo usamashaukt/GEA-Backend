@@ -9,7 +9,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Rate Limiting
-const limiter = rateLimit({
+const limiter = rateLimit({  
     windowMs: 15 * 60 * 1000,
     max: 100,
 });
