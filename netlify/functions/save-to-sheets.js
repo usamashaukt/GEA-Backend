@@ -18,7 +18,9 @@ exports.handler = async (event) => {
         const oauth2Client = new google.auth.OAuth2(
             process.env.CLIENT_ID,
             process.env.CLIENT_SECRET,
-            process.env.REDIRECT_URI
+            process.env.REDIRECT_URI,
+            REACT_APP_SERVER_ENDPOINT
+
         );
 
         oauth2Client.setCredentials({
