@@ -1,26 +1,50 @@
 const { google } = require("googleapis");
 
 exports.handler = async (event) => {
+    // Handle preflight requests for CORS
+    if (event.httpMethod === "OPTIONS") {
+        return {
+            statusCode: 204, // No Content
+            headers: {
+                "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app", // Replace with your frontend domain
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
+            body: "",
+        };
+    }
+
+    // Ensure the method is POST
     if (event.httpMethod !== "POST") {
         return {
-            statusCode: 405,
+            statusCode: 405, // Method Not Allowed
+            headers: {
+                "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app",
+            },
             body: JSON.stringify({ error: "Method not allowed" }),
         };
     }
 
-    const { name, email, phone, queries } = JSON.parse(event.body);
-
     try {
+        // Parse the request body
+        const { name, email, phone, queries } = JSON.parse(event.body);
+
+        // Validate required fields
         if (!name || !email) {
-            throw new Error("Name and Email are required fields.");
+            return {
+                statusCode: 400, // Bad Request
+                headers: {
+                    "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app",
+                },
+                body: JSON.stringify({ error: "Name and Email are required fields." }),
+            };
         }
 
+        // Initialize Google OAuth2 client
         const oauth2Client = new google.auth.OAuth2(
             process.env.CLIENT_ID,
             process.env.CLIENT_SECRET,
-            process.env.REDIRECT_URI,
-            REACT_APP_SERVER_ENDPOINT
-
+            process.env.REDIRECT_URI
         );
 
         oauth2Client.setCredentials({
@@ -29,6 +53,7 @@ exports.handler = async (event) => {
 
         const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
+        // Append data to Google Sheets
         await sheets.spreadsheets.values.append({
             spreadsheetId: process.env.SPREADSHEET_ID,
             range: "Sheet1!A1:D1",
@@ -40,12 +65,18 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app",
+            },
             body: JSON.stringify({ message: "Data saved successfully!" }),
         };
     } catch (error) {
         console.error("Error saving to Google Sheets:", error.message);
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app",
+            },
             body: JSON.stringify({
                 error: error.message || "Failed to save data to Google Sheets.",
             }),
