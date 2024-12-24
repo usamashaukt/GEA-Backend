@@ -27,16 +27,16 @@ exports.handler = async (event) => {
 
     try {
         // Parse the request body
-        const { name, email, phone, queries } = JSON.parse(event.body);
+        const { name, email, phone, queries, lastQualification } = JSON.parse(event.body);
 
         // Validate required fields
-        if (!name || !email) {
+        if (!name || !email || !lastQualification) {
             return {
                 statusCode: 400, // Bad Request
                 headers: {
                     "Access-Control-Allow-Origin": "https://globaleducationadviser.netlify.app",
                 },
-                body: JSON.stringify({ error: "Name and Email are required fields." }),
+                body: JSON.stringify({ error: "Name, Email, and Last Qualification are required fields." }),
             };
         }
 
@@ -56,10 +56,10 @@ exports.handler = async (event) => {
         // Append data to Google Sheets
         await sheets.spreadsheets.values.append({
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: "Sheet1!A1:D1",
+            range: "Sheet1!A1:E1", // Update range to include the new column
             valueInputOption: "USER_ENTERED",
             requestBody: {
-                values: [[name, email, phone || "N/A", queries || "N/A"]],
+                values: [[name, email, phone || "N/A", queries || "N/A", lastQualification]],
             },
         });
 

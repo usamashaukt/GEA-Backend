@@ -42,15 +42,28 @@ const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 // POST endpoint to save data to Google Sheets
 app.post("/save-to-sheets", async (req, res, next) => {
     try {
-        const { name, email, phone, queries } = req.body;
-        if (!name || !email) throw new Error("Name and Email are required fields.");
+        const { name, email, phone, queries, lastQualification } = req.body;
 
+        // Validate required fields
+        if (!name || !email || !lastQualification) {
+            throw new Error("Name, Email, and Last Qualification are required fields.");
+        }
+
+        // Append data to Google Sheets
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: "Sheet1!A1:D1",
+            range: "Sheet1!A1:E1", // Update range to include the new column
             valueInputOption: "USER_ENTERED",
             requestBody: {
-                values: [[name, email, phone || "N/A", queries || "N/A"]],
+                values: [
+                    [
+                        name,
+                        email,
+                        phone || "N/A",
+                        queries || "N/A",
+                        lastQualification, // Include last qualification
+                    ],
+                ],
             },
         });
         console.log("Google Sheets API Response:", response.data);
