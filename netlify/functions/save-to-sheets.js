@@ -6,7 +6,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 204, // No Content
             headers: {
-                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app/", // Replace with your frontend domain
+                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app", // Replace with your frontend domain
                 "Access-Control-Allow-Methods": "POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type",
             },
@@ -19,7 +19,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 405, // Method Not Allowed
             headers: {
-                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app/",
+                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app",
             },
             body: JSON.stringify({ error: "Method not allowed" }),
         };
@@ -34,7 +34,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 400, // Bad Request
                 headers: {
-                    "Access-Control-Allow-Origin": "https://huconsultants.netlify.app/",
+                    "Access-Control-Allow-Origin": "https://huconsultants.netlify.app",
                 },
                 body: JSON.stringify({ error: "Name, Email, and Last Qualification are required fields." }),
             };
@@ -66,7 +66,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app/",
+                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app",
             },
             body: JSON.stringify({ message: "Data saved successfully!" }),
         };
@@ -75,7 +75,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: {
-                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app/",
+                "Access-Control-Allow-Origin": "https://huconsultants.netlify.app",
             },
             body: JSON.stringify({
                 error: error.message || "Failed to save data to Google Sheets.",
