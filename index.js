@@ -18,7 +18,7 @@ app.use(limiter);
 // Configure CORS
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://globaleducationadviser.netlify.app"],
+        origin: ["http://localhost:5173", "https://https://huconsultants.netlify.app/"],
         methods: ["GET", "POST", "OPTIONS"],
         allowedHeaders: ["Content-Type"],
     })
